@@ -5,12 +5,12 @@ using UnityEngine.InputSystem;
 
 namespace Zoomer.Input
 {
-	public class InputReader : InputSystem.IPlayerActions
+	public class InputReader : UnityInput.IPlayerActions
 	{		
-		private Entity inputEntity;
-		private InputData inputData;
+		private Entity _inputEntity;
+		private InputData _inputData;
 
-		private InputSystem inputSystem;
+		private UnityInput _unityInput;
 		private static InputReader instance;
 		
 		[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
@@ -21,17 +21,17 @@ namespace Zoomer.Input
 
 		private InputReader()
 		{
-			inputSystem = new InputSystem();
-			inputSystem.Player.SetCallbacks(this);
-			inputSystem.Player.Enable();
+			_unityInput = new UnityInput();
+			_unityInput.Player.SetCallbacks(this);
+			_unityInput.Player.Enable();
 
-			inputEntity = World.DefaultGameObjectInjectionWorld.EntityManager.CreateEntity(typeof(InputData));
+			_inputEntity = World.DefaultGameObjectInjectionWorld.EntityManager.CreateEntity(typeof(InputData));
 		}
 
 		public void OnMove(InputAction.CallbackContext context)
 		{
-			inputData.MoveDirection = context.ReadValue<Vector2>();
-			World.DefaultGameObjectInjectionWorld.EntityManager.SetComponentData(inputEntity, inputData);
+			_inputData.MoveDirection = context.ReadValue<Vector2>();
+			World.DefaultGameObjectInjectionWorld.EntityManager.SetComponentData(_inputEntity, _inputData);
 		}
 
 		public void OnAttack(InputAction.CallbackContext context)
