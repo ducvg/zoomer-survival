@@ -10,6 +10,7 @@ namespace Zoomer.Input
 		private Entity _inputEntity;
 		private InputData _inputData;
 
+		private EntityManager _entityManager;
 		private UnityInput _unityInput;
 		private static InputReader instance;
 		
@@ -17,6 +18,7 @@ namespace Zoomer.Input
 		private static void Initialize()
 		{
 			instance = new InputReader();
+			SetWorld(World.DefaultGameObjectInjectionWorld);
 		}
 
 		private InputReader()
@@ -24,14 +26,25 @@ namespace Zoomer.Input
 			_unityInput = new UnityInput();
 			_unityInput.Player.SetCallbacks(this);
 			_unityInput.Player.Enable();
+		}
 
-			_inputEntity = World.DefaultGameObjectInjectionWorld.EntityManager.CreateEntity(typeof(InputData));
+		public static void SetWorld(World world)
+		{
+			ref var inputEntity = ref instance._inputEntity;
+			ref var em = ref instance._entityManager;
+			if(inputEntity != Entity.Null)
+			{
+				em.DestroyEntity(inputEntity);
+			}
+
+			em = world.EntityManager;
+			inputEntity = em.CreateSingleton<InputData>();
 		}
 
 		public void OnMove(InputAction.CallbackContext context)
 		{
 			_inputData.MoveDirection = context.ReadValue<Vector2>();
-			World.DefaultGameObjectInjectionWorld.EntityManager.SetComponentData(_inputEntity, _inputData);
+			_entityManager.SetComponentData(_inputEntity, _inputData);
 		}
 
 		public void OnAttack(InputAction.CallbackContext context)
