@@ -1,4 +1,4 @@
-namespace Zoomer.Animation
+namespace Zoomer
 {
 	public enum ActionKind : byte
 	{

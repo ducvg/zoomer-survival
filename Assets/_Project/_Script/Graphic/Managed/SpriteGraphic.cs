@@ -2,9 +2,9 @@ using System;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 
-namespace Zoomer.Animation
+namespace Zoomer.Graphic
 {
-    public sealed class CharacterGraphic : MonoBehaviour
+    public sealed class SpriteGraphic : MonoBehaviour
     {
         [SerializeField] private SpriteRenderer _spriteRenderer;
 		[NonSerialized] public new Transform transform;

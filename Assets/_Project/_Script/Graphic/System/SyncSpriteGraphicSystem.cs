@@ -5,15 +5,15 @@ using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine.Jobs;
 
-namespace Zoomer.Animation
+namespace Zoomer.Graphic
 {
 	[UpdateInGroup(typeof(PresentationSystemGroup))]
-    public partial struct SyncCharacterGraphicSystem : ISystem
+    public partial struct SyncSpriteGraphicSystem : ISystem
     {
         [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
-			var storage = SystemAPI.GetSingleton<CharacterGraphicStorageData>();
+			var storage = SystemAPI.GetSingleton<SpriteGraphicStorageData>();
 			var graphicTransformArray = storage.TransformAccessArray;
 			NativeArray<float3> entityPosition = new(graphicTransformArray.length, Allocator.TempJob);
 
@@ -35,7 +35,7 @@ namespace Zoomer.Animation
         {
             [NativeDisableParallelForRestriction] public NativeArray<float3> positions;
 
-            private void Execute(in CharacterGraphicRef graphicRef, in LocalToWorld localToWorld)
+            private void Execute(in SpriteGraphicRef graphicRef, in LocalToWorld localToWorld)
             {
                 positions[graphicRef.DataIndex] = localToWorld.Position;
             }

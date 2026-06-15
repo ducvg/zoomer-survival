@@ -1,34 +1,33 @@
-using Unity.Collections;
 using Unity.Entities;
 
-namespace Zoomer.Animation
+namespace Zoomer.Graphic
 {
-	public partial class DestroyCharacterGraphicSystem : SystemBase
+	public partial class DespawnCharacterGraphicSystem : SystemBase
 	{
 		protected override void OnCreate()
 		{
-			RequireForUpdate<DestroyCharacterGraphicTag>();
+			RequireForUpdate<DespawnSpriteGraphicTag>();
 		}
 
 		protected override void OnUpdate()
 		{
-			var storage = SystemAPI.GetSingleton<CharacterGraphicStorageData>();
+			var storage = SystemAPI.GetSingleton<SpriteGraphicStorageData>();
 			var ecb = SystemAPI.GetSingleton<BeginInitializationEntityCommandBufferSystem.Singleton>()
 				.CreateCommandBuffer(World.Unmanaged);
 			foreach (var (graphicRef, entity) in SystemAPI
-				.Query<RefRO<CharacterGraphicRef>>()
-				.WithAll<DestroyCharacterGraphicTag>()
+				.Query<RefRO<SpriteGraphicRef>>()
+				.WithAll<DespawnSpriteGraphicTag>()
 				.WithEntityAccess())
 			{
-				CharacterGraphicFactory.Return(graphicRef.ValueRO.Value);
+				SpriteGraphicFactory.Return(graphicRef.ValueRO.Value);
 				int removeIndex = graphicRef.ValueRO.DataIndex;
 				HandleRemoveSwapback(removeIndex, ref storage);
 
-				ecb.RemoveComponent<DestroyCharacterGraphicTag>(entity);
+				ecb.RemoveComponent<DespawnSpriteGraphicTag>(entity);
 			}
 		}
 
-		private void HandleRemoveSwapback(int removeIndex, ref CharacterGraphicStorageData storage)
+		private void HandleRemoveSwapback(int removeIndex, ref SpriteGraphicStorageData storage)
 		{
 			var transformArray = storage.TransformAccessArray;
 			var entityList = storage.EntityGraphicList;
@@ -42,7 +41,7 @@ namespace Zoomer.Animation
 
 			if (removeIndex != lastIndex)
 			{
-				var graphicref = SystemAPI.GetComponentRW<CharacterGraphicRef>(entityList[removeIndex]);
+				var graphicref = SystemAPI.GetComponentRW<SpriteGraphicRef>(entityList[removeIndex]);
 				graphicref.ValueRW.DataIndex = removeIndex;
 			}
 		}

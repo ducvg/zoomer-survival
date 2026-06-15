@@ -2,17 +2,17 @@ using Unity.Collections;
 using Unity.Entities;
 using UnityEngine.Jobs;
 
-namespace Zoomer.Animation
+namespace Zoomer.Graphic
 {
-	public struct CharacterGraphicStorageData : IComponentData
+	public struct SpriteGraphicStorageData : IComponentData
 	{
 		public TransformAccessArray TransformAccessArray;
 		public NativeList<Entity> EntityGraphicList;
 	}
 
-    public struct CharacterGraphicRef : IComponentData
+    public struct SpriteGraphicRef : IComponentData
     {
-		public UnityObjectRef<CharacterGraphic> Value;
+		public UnityObjectRef<SpriteGraphic> Value;
 		public int DataIndex;
     }
 }

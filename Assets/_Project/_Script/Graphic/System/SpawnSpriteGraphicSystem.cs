@@ -1,20 +1,20 @@
 using Unity.Collections;
 using Unity.Entities;
 
-namespace Zoomer.Animation
+namespace Zoomer.Graphic
 {
-	public partial class CreateCharacterGraphicSystem : SystemBase
+	public partial class SpawnSpriteGraphicSystem : SystemBase
 	{
 		protected override void OnCreate()
 		{
-			var storage = new CharacterGraphicStorageData
+			var storage = new SpriteGraphicStorageData
 			{
 				TransformAccessArray = new(256),
 				EntityGraphicList = new(256, Allocator.Persistent)
 			};
 			EntityManager.CreateSingleton(storage);
 
-			RequireForUpdate<CreateCharacterGraphicTag>();
+			RequireForUpdate<SpawnCharacterGraphicTag>();
 		}
 
 		protected override void OnUpdate()
@@ -22,14 +22,14 @@ namespace Zoomer.Animation
 			int index = 0;
 			var ecb = SystemAPI.GetSingleton<BeginInitializationEntityCommandBufferSystem.Singleton>()
 				.CreateCommandBuffer(World.Unmanaged);
-			var graphicStorage = SystemAPI.GetSingleton<CharacterGraphicStorageData>();
+			var graphicStorage = SystemAPI.GetSingleton<SpriteGraphicStorageData>();
 
 			foreach (var (graphicRef, entity) in SystemAPI
-				.Query<RefRW<CharacterGraphicRef>>()
-				.WithAll<CreateCharacterGraphicTag>()
+				.Query<RefRW<SpriteGraphicRef>>()
+				.WithAll<SpawnCharacterGraphicTag>()
 				.WithEntityAccess())
 			{
-				var graphic = CharacterGraphicFactory.Create();
+				var graphic = SpriteGraphicFactory.Create();
 
 				graphicRef.ValueRW.Value = graphic;
 				graphicRef.ValueRW.DataIndex = index;
@@ -37,14 +37,14 @@ namespace Zoomer.Animation
 				graphicStorage.TransformAccessArray.Add(graphic.transform);
 				graphicStorage.EntityGraphicList.Add(entity);
 
-				ecb.RemoveComponent<CreateCharacterGraphicTag>(entity);
+				ecb.RemoveComponent<SpawnCharacterGraphicTag>(entity);
 				++index;
 			}
 		}
 
 		protected override void OnDestroy()
 		{
-			if (SystemAPI.TryGetSingleton<CharacterGraphicStorageData>(out var storage))
+			if (SystemAPI.TryGetSingleton<SpriteGraphicStorageData>(out var storage))
 			{
 				storage.TransformAccessArray.Dispose();
 				storage.EntityGraphicList.Dispose();

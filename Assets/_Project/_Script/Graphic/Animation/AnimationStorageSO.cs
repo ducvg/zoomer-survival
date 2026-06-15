@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Zoomer.Animation
+namespace Zoomer.Graphic.Animation
 {
     [CreateAssetMenu(fileName = "Animation Storage", menuName = "Scriptable Objects/Animation Storage")]
     public sealed class AnimationStorageSO : ScriptableObject
