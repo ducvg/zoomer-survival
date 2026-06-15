@@ -5,7 +5,7 @@ using UnityEngine.InputSystem;
 
 namespace Zoomer.Input
 {
-	public class InputReader : UnityInput.IPlayerActions
+	public sealed class InputReader : UnityInput.IPlayerActions
 	{		
 		private Entity _inputEntity;
 		private InputData _inputData;

@@ -8,20 +8,32 @@ namespace Zoomer
 	[UpdateInGroup(typeof(SimulationSystemGroup))]
     public partial struct CharacterMoverSystem : ISystem
     {
+		private EntityQuery _moveQuery;
+
         [BurstCompile]
         public void OnCreate(ref SystemState state)
         {
+			_moveQuery = SystemAPI.QueryBuilder()
+				.WithAll<PhysicsVelocity, CharacterMoveDirection, CharacterMoveSpeed>()
+				.Build();
 			state.RequireForUpdate<CharacterMoveDirection>();
         }
 
         [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
-			foreach (var (moveDirection, moveSpeed, velocity) in SystemAPI.Query<RefRO<CharacterMoveDirection>, RefRO<CharacterMoveSpeed>, RefRW<PhysicsVelocity>>())
-			{
-				var moveDelta = moveDirection.ValueRO.Value * moveSpeed.ValueRO.Value;
-				velocity.ValueRW.Linear = new float3(moveDelta, 0);
-			}
+			var job = new MoveVelocityJob();
+			state.Dependency = job.ScheduleParallel(_moveQuery,state.Dependency);
         }
+
+		[BurstCompile]
+		private partial struct MoveVelocityJob : IJobEntity
+		{
+			public void Execute(ref PhysicsVelocity velocity, in CharacterMoveDirection moveDirection, in CharacterMoveSpeed moveSpeed)
+			{
+				var moveDelta = moveDirection.Value * moveSpeed.Value;
+				velocity.Linear = new float3(moveDelta, 0);
+			}
+		}
     }
 }

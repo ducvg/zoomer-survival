@@ -8,7 +8,6 @@ namespace Zoomer
 		public float2 Value;
 	}
 
-	//readonly
 	public struct CharacterMoveSpeed : IComponentData
 	{
 		public float Value;

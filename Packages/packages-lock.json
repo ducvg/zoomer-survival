@@ -1,5 +1,12 @@
 {
   "dependencies": {
+    "com.dvg.pool": {
+      "version": "https://github.com/ducvg/DVG.git?path=Assets/DVG/Runtime/Pool",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "f374e58d69c52e4844746f67a59692392f950cc8"
+    },
     "com.unity.2d.animation": {
       "version": "13.0.5",
       "depth": 1,

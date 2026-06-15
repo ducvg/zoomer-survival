@@ -3,8 +3,8 @@ using UnityEngine;
 
 namespace Zoomer.Animation
 {
-    [CreateAssetMenu(fileName = "AnimationStorageSO", menuName = "Scriptable Objects/AnimationStorageSO")]
-    public class AnimationStorageSO : ScriptableObject
+    [CreateAssetMenu(fileName = "Animation Storage", menuName = "Scriptable Objects/Animation Storage")]
+    public sealed class AnimationStorageSO : ScriptableObject
     {
 		[SerializeField] private AnimationConfig[] _actionAnimations;
 		public AnimationConfig this[ActionKind actionKind] => _actionAnimations[(byte)actionKind];
@@ -13,6 +13,7 @@ namespace Zoomer.Animation
 		private void OnValidate()
 		{
 			Array.Sort(_actionAnimations, (a, b) => a.ActionKind.CompareTo(b.ActionKind));
+			foreach(var actionAnims in _actionAnimations) actionAnims.ActionName = actionAnims.ActionKind.ToString();
 		}
 		#endif
 
@@ -21,8 +22,8 @@ namespace Zoomer.Animation
 		public class AnimationConfig
 		{
 			#if UNITY_EDITOR
-			[SerializeField] private string _actionName;
-			[SerializeField] public ActionKind ActionKind;
+			[HideInInspector] public string ActionName;
+			public ActionKind ActionKind;
 			#endif
 			
 			public int Fps;

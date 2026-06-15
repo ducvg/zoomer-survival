@@ -4,7 +4,7 @@ using Unity.Transforms;
 namespace Zoomer.Camera
 {
 	[UpdateAfter(typeof(TransformSystemGroup))]
-    public partial class CameraMoverSystem : SystemBase
+    public sealed partial class CameraMoverSystem : SystemBase
     {
 		protected override void OnUpdate()
 		{
