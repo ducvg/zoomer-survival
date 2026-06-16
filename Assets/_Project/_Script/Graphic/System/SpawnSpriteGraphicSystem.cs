@@ -7,13 +7,6 @@ namespace Zoomer.Graphic
 	{
 		protected override void OnCreate()
 		{
-			var storage = new SpriteGraphicStorageData
-			{
-				TransformAccessArray = new(256),
-				EntityGraphicList = new(256, Allocator.Persistent)
-			};
-			EntityManager.CreateSingleton(storage);
-
 			RequireForUpdate<SpawnCharacterGraphicTag>();
 		}
 
@@ -39,15 +32,6 @@ namespace Zoomer.Graphic
 
 				ecb.RemoveComponent<SpawnCharacterGraphicTag>(entity);
 				++index;
-			}
-		}
-
-		protected override void OnDestroy()
-		{
-			if (SystemAPI.TryGetSingleton<SpriteGraphicStorageData>(out var storage))
-			{
-				storage.TransformAccessArray.Dispose();
-				storage.EntityGraphicList.Dispose();
 			}
 		}
 	}

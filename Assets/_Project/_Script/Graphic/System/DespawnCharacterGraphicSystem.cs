@@ -14,6 +14,7 @@ namespace Zoomer.Graphic
 			var storage = SystemAPI.GetSingleton<SpriteGraphicStorageData>();
 			var ecb = SystemAPI.GetSingleton<BeginInitializationEntityCommandBufferSystem.Singleton>()
 				.CreateCommandBuffer(World.Unmanaged);
+				
 			foreach (var (graphicRef, entity) in SystemAPI
 				.Query<RefRO<SpriteGraphicRef>>()
 				.WithAll<DespawnSpriteGraphicTag>()

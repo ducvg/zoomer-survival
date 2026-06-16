@@ -2,18 +2,19 @@ using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Zoomer.Graphic.Animation;
 
 namespace Zoomer.Input
 {
 	public sealed class InputReader : UnityInput.IPlayerActions
-	{		
+	{
 		private Entity _inputEntity;
 		private InputData _inputData;
 
 		private EntityManager _entityManager;
 		private UnityInput _unityInput;
 		private static InputReader instance;
-		
+
 		[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
 		private static void Initialize()
 		{
@@ -32,7 +33,7 @@ namespace Zoomer.Input
 		{
 			ref var inputEntity = ref instance._inputEntity;
 			ref var em = ref instance._entityManager;
-			if(inputEntity != Entity.Null)
+			if (inputEntity != Entity.Null)
 			{
 				em.DestroyEntity(inputEntity);
 			}
