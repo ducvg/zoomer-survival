@@ -7,15 +7,16 @@ using UnityEngine.Jobs;
 
 namespace Zoomer.Graphic
 {
+	[BurstCompile]
 	[UpdateInGroup(typeof(PresentationSystemGroup))]
-    public partial struct SyncSpriteGraphicSystem : ISystem
+    public partial struct SyncSpriteGraphicPositionSystem : ISystem
     {
         [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
 			var storage = SystemAPI.GetSingleton<SpriteGraphicStorageData>();
 			var graphicTransformArray = storage.TransformAccessArray;
-			NativeArray<float3> entityPosition = new(graphicTransformArray.length, Allocator.TempJob);
+			NativeArray<float3> entityPosition = CollectionHelper.CreateNativeArray<float3>(graphicTransformArray.length, state.WorldUpdateAllocator);
 
 			var fetchJob = new FetchTransformPositionJob {
                 positions = entityPosition,
@@ -26,15 +27,14 @@ namespace Zoomer.Graphic
                 positions = entityPosition.AsReadOnly(),
             };
             state.Dependency = syncJob.Schedule(graphicTransformArray, state.Dependency);
-
-			state.Dependency = entityPosition.Dispose(state.Dependency);
         }
 
 		[BurstCompile]
         private partial struct FetchTransformPositionJob : IJobEntity
         {
             [NativeDisableParallelForRestriction] public NativeArray<float3> positions;
-
+            
+			[BurstCompile]
             private void Execute(in SpriteGraphicRef graphicRef, in LocalToWorld localToWorld)
             {
                 positions[graphicRef.DataIndex] = localToWorld.Position;
