@@ -10,9 +10,9 @@ namespace Zoomer.Graphic
 		public NativeList<Entity> EntityGraphicList;
 	}
 
-    public struct SpriteGraphicRef : IComponentData
-    {
+	public struct SpriteGraphicRef : IComponentData
+	{
 		public UnityObjectRef<SpriteGraphic> Value;
 		public int DataIndex;
-    }
+	}
 }

@@ -15,7 +15,7 @@ MonoBehaviour:
   Actions:
   - ActionName: Idle
     ActionKind: 0
-    Fps: 0
+    Fps: 20
     Frames:
     - {fileID: 21300000, guid: d8cd44f3c533a5045b2d3a4037402b29, type: 3}
   - ActionName: Walk

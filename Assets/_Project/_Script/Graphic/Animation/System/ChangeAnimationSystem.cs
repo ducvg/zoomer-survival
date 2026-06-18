@@ -6,16 +6,23 @@ namespace Zoomer.Graphic.Animation
 	[UpdateInGroup(typeof(PresentationSystemGroup))]
 	public partial struct ChangeAnimationSystem : ISystem
 	{
+		private EntityQuery _query;
+
 		public void OnCreate(ref SystemState state)
 		{
+			_query = SystemAPI.QueryBuilder()
+				.WithAllRW<ChangeAnimationData>()
+				.WithAllRW<ActionAnimationData>()
+				.Build();
+
+			state.RequireForUpdate(_query);
 		}
 
 		public void OnUpdate(ref SystemState state)
 		{
-			foreach (var (animData, changeData) in SystemAPI.Query<RefRW<ActionAnimationData>, RefRO<ChangeAnimationData>>())
-			{
+			var storage = SystemAPI.GetSingleton<NativeAnimationStorageData>();
 
-			}
+
 		}
 	}
 }

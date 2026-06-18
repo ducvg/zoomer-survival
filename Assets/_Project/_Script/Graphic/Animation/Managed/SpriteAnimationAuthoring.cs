@@ -4,10 +4,10 @@ using UnityEngine;
 
 namespace Zoomer.Graphic.Animation
 {
-	[RequireComponent(typeof(SpriteGraphicAuthoring))]
 	public sealed class SpriteAnimationAuthoring : MonoBehaviour
 	{
 		[SerializeField] private CharacterAnimationConfigSO _characterAnimationStorage;
+		[SerializeField] private ActionKind _defaultAnimation;
 
 		private sealed class AnimationBaker : Baker<SpriteAnimationAuthoring>
 		{
@@ -17,16 +17,20 @@ namespace Zoomer.Graphic.Animation
 
 				AddComponent(entity, new CharacterAnimationData
 				{
-					AnimationStorageId = authoring._characterAnimationStorage.GetEntityId()
+					AnimationConfigId = authoring._characterAnimationStorage.GetEntityId()
 				});
 				AddComponent(entity, new ActionAnimationData
 				{
-					CurrentAction = ActionKind.Idle
+					CurrentAction = authoring._defaultAnimation,
+					NativeData = new NativeActionAnimationData
+					{
+						FrameCount = authoring._characterAnimationStorage[authoring._defaultAnimation].Frames.Length,
+						Fps = authoring._characterAnimationStorage[authoring._defaultAnimation].Fps
+					}
 				});
-				AddComponent(entity, new ChangeAnimationData
-				{
-					NewAction = ActionKind.Idle
-				});
+				AddComponent<ChangeAnimationData>(entity);
+				// AddComponent<SpawnCharacterGraphicTag>(entity);
+				SetComponentEnabled<ChangeAnimationData>(entity, false);
 			}
 		}
 	}

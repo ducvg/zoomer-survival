@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Zoomer.Graphic.Animation
@@ -7,11 +8,14 @@ namespace Zoomer.Graphic.Animation
 	public sealed class AnimationStorageSO : ScriptableSingleton<AnimationStorageSO>
 	{
 		[SerializeField] private CharacterAnimationConfigSO[] _charAnimConfigs;
+		[SerializeField] private Material _sharedMaterial;
+		public static Material SharedMaterial => Instance._sharedMaterial;
 		public static Dictionary<EntityId, CharacterAnimationConfigSO> CharAnimConfigDict { get; private set; }
 		public static int CharAnimationCount => CharAnimConfigDict.Count;
 
 		void OnEnable()
 		{
+			Instance = this;
 			CharAnimConfigDict = new(_charAnimConfigs.Length);
 			foreach (var charAnim in _charAnimConfigs)
 			{

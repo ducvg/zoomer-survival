@@ -1,3 +1,4 @@
+using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 
@@ -8,6 +9,7 @@ namespace Zoomer.Graphic
 	{
 		private SpriteGraphicStorageData _storage;
 
+		[BurstCompile]
 		public void OnCreate(ref SystemState state)
 		{
 			_storage = new SpriteGraphicStorageData
@@ -18,6 +20,7 @@ namespace Zoomer.Graphic
 			state.EntityManager.CreateSingleton(_storage);
 		}
 
+		[BurstCompile]
 		public void OnDestroy(ref SystemState state)
 		{
 			_storage.TransformAccessArray.Dispose();

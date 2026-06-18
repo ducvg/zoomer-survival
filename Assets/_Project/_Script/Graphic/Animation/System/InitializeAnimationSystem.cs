@@ -1,17 +1,31 @@
 using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
-using NativeCharacterAnimationData = Zoomer.Graphic.Animation.NativeAnimationStorageData.NativeCharacterAnimationData;
 
 namespace Zoomer.Graphic.Animation
 {
+	using NativeCharacterAnimationData = NativeAnimationStorageData.NativeCharacterAnimationData;
+
 	[UpdateAfter(typeof(InitializeSpriteGraphicSystem))]
 	[UpdateInGroup(typeof(InitializationSystemGroup))]
 	public partial class InitializeAnimationSystem : SystemBase
 	{
 		private NativeAnimationStorageData _nativeStorage;
+		private DrawFrameData _drawData;
 
 		protected override void OnCreate()
+		{
+			CreateNativeAnimationStorage();
+			EntityManager.CreateSingleton(_drawData);
+		}
+
+		protected override void OnDestroy()
+		{
+			DiposeNativeAnimationStorage();
+			_drawData.DrawBatches.Dispose();
+		}
+
+		private void CreateNativeAnimationStorage()
 		{
 			int charAnimCount = AnimationStorageSO.CharAnimationCount;
 			var charAnimMap = new NativeHashMap<EntityId, NativeCharacterAnimationData>(charAnimCount, Allocator.Persistent);
@@ -23,11 +37,13 @@ namespace Zoomer.Graphic.Animation
 				for (int i = 0; i < actionCount; ++i)
 				{
 					var actionConfig = charAnimConfig.Actions[i];
+					int frameCount = actionConfig.Frames.Length;
 					charAnim.Actions[i] = new NativeActionAnimationData()
 					{
 						Fps = actionConfig.Fps,
-						FrameCount = actionConfig.Frames.Length
+						FrameCount = frameCount
 					};
+					_drawData.MaxBatchCount += frameCount;
 				}
 				charAnimMap[configId] = charAnim;
 			}
@@ -38,20 +54,16 @@ namespace Zoomer.Graphic.Animation
 
 			EntityManager.CreateSingleton(_nativeStorage);
 		}
-
-		protected override void OnDestroy()
+		private void DiposeNativeAnimationStorage()
 		{
-			using var kv = _nativeStorage.Characters.GetKeyValueArrays(Allocator.Temp);
+			using var kv = _nativeStorage.Characters.GetValueArray(Allocator.Temp);
 			for (int i = 0; i < kv.Length; i++)
 			{
-				kv.Values[i].Actions.Dispose();
+				kv[i].Actions.Dispose();
 			}
 			_nativeStorage.Characters.Dispose();
 		}
 
-		protected override void OnUpdate()
-		{
-
-		}
+		protected override void OnUpdate() { }
 	}
 }

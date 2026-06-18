@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Zoomer.Graphic.Animation.AnimationStorageSO
   _charAnimConfigs:
   - {fileID: 11400000, guid: b01696829444e7c4b89c11912b91ae3f, type: 2}
-  - {fileID: 11400000, guid: 6424357e3a9eba6499c45278c64fef0d, type: 2}
+  _sharedMaterial: {fileID: 2100000, guid: abdc3ad312e429a4092b393ac1f04fba, type: 2}

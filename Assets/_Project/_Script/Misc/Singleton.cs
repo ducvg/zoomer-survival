@@ -43,7 +43,7 @@ namespace Zoomer
 
 	public abstract class ScriptableSingleton<T> : ScriptableObject where T : ScriptableObject
 	{
-		public static T Instance { get; private set; }
+		public static T Instance { get; protected set; }
 
 		protected void Awake()
 		{

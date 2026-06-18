@@ -1,17 +1,53 @@
+using System;
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Mathematics;
 using UnityEngine;
 
 namespace Zoomer.Graphic.Animation
 {
+
+	public struct ChangeAnimationData : IComponentData, IEnableableComponent
+	{
+		public ActionKind NewAction;
+		// public ActionKind PrevAction;
+	}
+
+	public struct DrawFrameData : IComponentData //idk
+	{
+		public NativeParallelMultiHashMap<DrawBatch, Matrix4x4> DrawBatches;
+		public NativeParallelHashSet<DrawBatch> DrawBatchSet;
+		public int MaxBatchCount;
+
+		public struct DrawBatch : IEquatable<DrawBatch>, IComparable<DrawBatch>
+		{
+			public EntityId CharConfigId;
+			public ActionKind ActionKind;
+			public int FrameIndex;
+
+			public int CompareTo(DrawBatch other)
+			{
+				int result = CharConfigId.CompareTo(other.CharConfigId);
+				if (result != 0) return result;
+
+				result = ActionKind.CompareTo(other.ActionKind);
+				if (result != 0) return result;
+
+				return FrameIndex.CompareTo(other.FrameIndex);
+			}
+			public bool Equals(DrawBatch other) => CharConfigId == other.CharConfigId && ActionKind == other.ActionKind && FrameIndex == other.FrameIndex;
+		}
+	}
+
 	public struct CharacterAnimationData : IComponentData
 	{
-		public EntityId AnimationStorageId;
+		public EntityId AnimationConfigId;
 	}
 
 	public struct ActionAnimationData : IComponentData
 	{
 		public ActionKind CurrentAction;
+		public float FrameTimer;
 		public int FrameIndex;
 		public NativeActionAnimationData NativeData;
 	}
@@ -30,11 +66,5 @@ namespace Zoomer.Graphic.Animation
 		{
 			public NativeArray<NativeActionAnimationData> Actions;
 		}
-	}
-
-	public struct ChangeAnimationData : IComponentData
-	{
-		public ActionKind NewAction;
-		// public ActionKind PrevAction;
 	}
 }
