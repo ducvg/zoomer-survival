@@ -16,6 +16,10 @@ namespace Zoomer.Graphic.Animation
 		protected override void OnCreate()
 		{
 			CreateNativeAnimationStorage();
+			_drawData = new()
+			{
+				DrawBatches = new NativeHashMap<DrawFrameData.DrawBatch, NativeList<Matrix4x4>>(512, Allocator.Persistent)
+			};
 			EntityManager.CreateSingleton(_drawData);
 		}
 

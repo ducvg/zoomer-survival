@@ -15,26 +15,15 @@ namespace Zoomer.Graphic.Animation
 
 	public struct DrawFrameData : IComponentData //idk
 	{
-		public NativeParallelMultiHashMap<DrawBatch, Matrix4x4> DrawBatches;
-		public NativeParallelHashSet<DrawBatch> DrawBatchSet;
+		public NativeHashMap<DrawBatch, NativeList<Matrix4x4>> DrawBatches;
 		public int MaxBatchCount;
 
-		public struct DrawBatch : IEquatable<DrawBatch>, IComparable<DrawBatch>
+		public struct DrawBatch : IEquatable<DrawBatch>
 		{
 			public EntityId CharConfigId;
 			public ActionKind ActionKind;
 			public int FrameIndex;
 
-			public int CompareTo(DrawBatch other)
-			{
-				int result = CharConfigId.CompareTo(other.CharConfigId);
-				if (result != 0) return result;
-
-				result = ActionKind.CompareTo(other.ActionKind);
-				if (result != 0) return result;
-
-				return FrameIndex.CompareTo(other.FrameIndex);
-			}
 			public bool Equals(DrawBatch other) => CharConfigId == other.CharConfigId && ActionKind == other.ActionKind && FrameIndex == other.FrameIndex;
 		}
 	}

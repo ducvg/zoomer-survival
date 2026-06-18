@@ -20,7 +20,7 @@ MonoBehaviour:
     - {fileID: 21300000, guid: d8cd44f3c533a5045b2d3a4037402b29, type: 3}
   - ActionName: Walk
     ActionKind: 1
-    Fps: 30
+    Fps: 20
     Frames:
     - {fileID: 21300000, guid: d8cd44f3c533a5045b2d3a4037402b29, type: 3}
     - {fileID: 21300000, guid: 777a5b6a31a36e64f9fafc0316960e53, type: 3}

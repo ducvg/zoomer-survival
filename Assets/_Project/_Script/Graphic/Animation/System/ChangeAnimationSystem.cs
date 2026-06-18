@@ -16,6 +16,7 @@ namespace Zoomer.Graphic.Animation
 				.Build();
 
 			state.RequireForUpdate(_query);
+			state.RequireForUpdate<NativeAnimationStorageData>();
 		}
 
 		public void OnUpdate(ref SystemState state)
