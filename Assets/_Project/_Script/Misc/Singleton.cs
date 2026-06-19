@@ -1,43 +1,101 @@
+using System;
+using UnityEditor;
 using UnityEngine;
-
-namespace Zoomer
+public abstract class Singleton<T> : MonoBehaviour where T : MonoBehaviour
 {
-	public abstract class Singleton<T> : MonoBehaviour where T : MonoBehaviour
+	private static T _instance;
+	public static T Instance
 	{
-		private static T _instance;
-		public static T Instance
+		get
 		{
-			get
+			if (!_instance)
 			{
-				if (!_instance)
-				{
-					_instance = FindAnyObjectByType<T>();
-				}
-
-				return _instance;
-			}
-			protected set => _instance = value;
-		}
-
-		protected virtual void Awake()
-		{
-			if (_instance && _instance != this)
-			{
-				Destroy(gameObject);
-				return;
+				_instance = FindAnyObjectByType<T>();
 			}
 
-			_instance = this as T;
+			return _instance;
 		}
+		protected set => _instance = value;
 	}
 
-	public abstract class PersistentSingleton<T> : Singleton<T> where T : MonoBehaviour
+	protected virtual void Awake()
 	{
-		protected override void Awake()
+		if (_instance && _instance != this)
 		{
-			base.Awake();
-			transform.SetParent(null);
-			DontDestroyOnLoad(gameObject);
+			Destroy(gameObject);
+			return;
+		}
+
+		_instance = this as T;
+	}
+}
+
+public abstract class PersistentSingleton<T> : Singleton<T> where T : MonoBehaviour
+{
+	protected override void Awake()
+	{
+		base.Awake();
+		transform.SetParent(null);
+		DontDestroyOnLoad(gameObject);
+	}
+}
+
+public abstract class ScriptableSingleton<T> : ScriptableSingleton where T : ScriptableObject
+{
+	public static T Instance => _instance;
+	private static T _instance;
+
+	protected void Awake()
+	{
+		if (_instance != null && _instance != this) return;
+		_instance = this as T;
+	}
+}
+
+public abstract class ScriptableSingleton : ScriptableObject
+{
+	[InitializeOnLoadMethod]
+	private static void LoadPreloadedAssets() => PlayerSettings.GetPreloadedAssets();
+
+	private sealed class ScriptableSingletonImporter : AssetPostprocessor
+	{
+		private static void OnPostprocessAllAssets(
+			string[] importedAssets,
+			string[] deletedAssets,
+			string[] movedAssets,
+			string[] movedFromAssetPaths,
+			bool didDomainReload)
+		{
+			if (didDomainReload) return;
+			bool isDeleteting = deletedAssets.Length > 0;
+			bool isMoving = movedAssets.Length > 0 || movedFromAssetPaths.Length > 0;
+			if (isDeleteting || isMoving) return;
+
+			string createdPath = importedAssets[0];
+			var singleton = AssetDatabase.LoadAssetAtPath<ScriptableSingleton>(createdPath);
+			if (!singleton) return;
+
+			//preload assets preload in runtime, not in editor startup, dumbshit
+			var preloadAssetArray = PlayerSettings.GetPreloadedAssets();
+			if (preloadAssetArray == null || preloadAssetArray.Length == 0)
+			{
+				preloadAssetArray = new UnityEngine.Object[1];
+			}
+			else
+			{
+				foreach (var preloaded in preloadAssetArray)
+				{
+					if (preloaded.GetType() == singleton.GetType())
+					{
+						AssetDatabase.DeleteAsset(createdPath);
+						EditorGUIUtility.PingObject(preloaded);
+						return;
+					}
+				}
+				Array.Resize(ref preloadAssetArray, preloadAssetArray.Length + 1);
+			}
+			preloadAssetArray[^1] = singleton;
+			PlayerSettings.SetPreloadedAssets(preloadAssetArray);
 		}
 	}
 }
