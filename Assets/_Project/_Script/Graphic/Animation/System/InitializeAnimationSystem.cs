@@ -20,13 +20,13 @@ namespace Zoomer.Graphic.Animation
 			{
 				DrawBatches = new NativeHashMap<DrawFrameData.DrawBatch, NativeList<Matrix4x4>>(512, Allocator.Persistent)
 			};
-			EntityManager.CreateSingleton(_drawData);
+			// EntityManager.CreateSingleton(_drawData);
 		}
 
 		protected override void OnDestroy()
 		{
 			DiposeNativeAnimationStorage();
-			_drawData.DrawBatches.Dispose();
+			// _drawData.DrawBatches.Dispose();
 		}
 
 		private void CreateNativeAnimationStorage()

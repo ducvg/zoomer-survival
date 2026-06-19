@@ -34,23 +34,23 @@ namespace Zoomer.Graphic.Animation
 			}
 		}
 
-		protected void OnUpdateInstancing()
-		{
-			var drawData = SystemAPI.GetSingleton<DrawFrameData>();
-			var drawBatches = drawData.DrawBatches;
+		// protected void OnUpdateInstancing()
+		// {
+		// 	var drawData = SystemAPI.GetSingleton<DrawFrameData>();
+		// 	var drawBatches = drawData.DrawBatches;
 
-			var charAnimConfigDict = AnimationStorageSO.CharAnimConfigDict;
-			RenderParams rp = new(AnimationStorageSO.SharedMaterial);
-			foreach (var batch in drawBatches)
-			{
-				var batchData = batch.Key;
-				var positions = batch.Value.AsArray();
+		// 	var charAnimConfigDict = AnimationStorageSO.CharAnimConfigDict;
+		// 	RenderParams rp = new(AnimationStorageSO.SharedMaterial);
+		// 	foreach (var batch in drawBatches)
+		// 	{
+		// 		var batchData = batch.Key;
+		// 		var positions = batch.Value.AsArray();
 
-				Sprite batchSprite = charAnimConfigDict[batchData.CharConfigId][batchData.ActionKind].Frames[batchData.FrameIndex];
-				SpriteParams sp = new(batchSprite);
+		// 		Sprite batchSprite = charAnimConfigDict[batchData.CharConfigId][batchData.ActionKind].Frames[batchData.FrameIndex];
+		// 		SpriteParams sp = new(batchSprite);
 
-				Graphics.RenderSpriteInstanced(rp, sp, submeshIndex: 0, positions);
-			}
-		}
+		// 		Graphics.RenderSpriteInstanced(rp, sp, submeshIndex: 0, positions);
+		// 	}
+		// }
 	}
 }

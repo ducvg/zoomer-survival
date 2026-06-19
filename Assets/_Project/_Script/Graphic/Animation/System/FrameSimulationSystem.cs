@@ -54,63 +54,63 @@ namespace Zoomer.Graphic.Animation
 			}
 		}
 
-		private void OnUpdateInstancing(ref SystemState state)
-		{
-			var drawData = SystemAPI.GetSingleton<DrawFrameData>();
-			int entityCount = _query.CalculateEntityCount();
-			int maxBatchSize = drawData.MaxBatchCount;
+		// private void OnUpdateInstancing(ref SystemState state)
+		// {
+		// 	var drawData = SystemAPI.GetSingleton<DrawFrameData>();
+		// 	int entityCount = _query.CalculateEntityCount();
+		// 	int maxBatchSize = drawData.MaxBatchCount;
 
-			var batchDataList = new NativeList<(DrawBatch, Matrix4x4)>(entityCount, state.WorldUpdateAllocator);
-			new UpdateFrameIndexInstancingJob
-			{
-				DeltaTime = SystemAPI.Time.DeltaTime,
-				DrawBatchDataList = batchDataList.AsParallelWriter()
-			}.ScheduleParallel(_query, state.Dependency).Complete();
+		// 	var batchDataList = new NativeList<(DrawBatch, Matrix4x4)>(entityCount, state.WorldUpdateAllocator);
+		// 	new UpdateFrameIndexInstancingJob
+		// 	{
+		// 		DeltaTime = SystemAPI.Time.DeltaTime,
+		// 		DrawBatchDataList = batchDataList.AsParallelWriter()
+		// 	}.ScheduleParallel(_query, state.Dependency).Complete();
 
-			ref var batches = ref drawData.DrawBatches;
-			batches.Clear();
-			var span = batchDataList.AsReadOnlySpan();
-			for (int i = 0; i < span.Length; ++i)
-			{
-				var batchData = span[i].Item1;
-				var position = span[i].Item2;
+		// 	ref var batches = ref drawData.DrawBatches;
+		// 	batches.Clear();
+		// 	var span = batchDataList.AsReadOnlySpan();
+		// 	for (int i = 0; i < span.Length; ++i)
+		// 	{
+		// 		var batchData = span[i].Item1;
+		// 		var position = span[i].Item2;
 
-				if (Hint.Unlikely(batches.TryAdd(batchData, new NativeList<Matrix4x4>(64, state.WorldUpdateAllocator))))
-				{
-					batches[batchData].AddNoResize(position);
-				}
-				else
-				{
-					batches[batchData].Add(position);
-				}
-			}
+		// 		if (Hint.Unlikely(batches.TryAdd(batchData, new NativeList<Matrix4x4>(64, state.WorldUpdateAllocator))))
+		// 		{
+		// 			batches[batchData].AddNoResize(position);
+		// 		}
+		// 		else
+		// 		{
+		// 			batches[batchData].Add(position);
+		// 		}
+		// 	}
 
-			SystemAPI.SetSingleton(drawData);
-		}
+		// 	SystemAPI.SetSingleton(drawData);
+		// }
 
-		[BurstCompile]
-		private partial struct UpdateFrameIndexInstancingJob : IJobEntity
-		{
-			[ReadOnly] public float DeltaTime;
-			[WriteOnly] public NativeList<(DrawBatch, Matrix4x4)>.ParallelWriter DrawBatchDataList;
+		// [BurstCompile]
+		// private partial struct UpdateFrameIndexInstancingJob : IJobEntity
+		// {
+		// 	[ReadOnly] public float DeltaTime;
+		// 	[WriteOnly] public NativeList<(DrawBatch, Matrix4x4)>.ParallelWriter DrawBatchDataList;
 
-			private void Execute(ref ActionAnimationData actionData, in CharacterAnimationData charAnimData, in LocalToWorld localToWorld)
-			{
-				var drawBatch = new DrawBatch
-				{
-					CharConfigId = charAnimData.AnimationConfigId,
-					ActionKind = actionData.CurrentAction,
-					FrameIndex = actionData.FrameIndex
-				};
-				DrawBatchDataList.AddNoResize((drawBatch, localToWorld.Value));
+		// 	private void Execute(ref ActionAnimationData actionData, in CharacterAnimationData charAnimData, in LocalToWorld localToWorld)
+		// 	{
+		// 		var drawBatch = new DrawBatch
+		// 		{
+		// 			CharConfigId = charAnimData.AnimationConfigId,
+		// 			ActionKind = actionData.CurrentAction,
+		// 			FrameIndex = actionData.FrameIndex
+		// 		};
+		// 		DrawBatchDataList.AddNoResize((drawBatch, localToWorld.Value));
 
-				actionData.FrameTimer += DeltaTime;
-				float frameDelay = 1f / actionData.NativeData.Fps;
-				if (Hint.Likely(actionData.FrameTimer < frameDelay)) return;
+		// 		actionData.FrameTimer += DeltaTime;
+		// 		float frameDelay = 1f / actionData.NativeData.Fps;
+		// 		if (Hint.Likely(actionData.FrameTimer < frameDelay)) return;
 
-				actionData.FrameTimer = 0;
-				actionData.FrameIndex = (actionData.FrameIndex + 1) % actionData.NativeData.FrameCount;
-			}
-		}
+		// 		actionData.FrameTimer = 0;
+		// 		actionData.FrameIndex = (actionData.FrameIndex + 1) % actionData.NativeData.FrameCount;
+		// 	}
+		// }
 	}
 }
