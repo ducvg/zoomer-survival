@@ -15,7 +15,6 @@ namespace Zoomer.Graphic.Animation
 
 		void OnEnable()
 		{
-			Instance = this;
 			CharAnimConfigDict = new(_charAnimConfigs.Length);
 			foreach (var charAnim in _charAnimConfigs)
 			{

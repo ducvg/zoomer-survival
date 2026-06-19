@@ -40,15 +40,4 @@ namespace Zoomer
 			DontDestroyOnLoad(gameObject);
 		}
 	}
-
-	public abstract class ScriptableSingleton<T> : ScriptableObject where T : ScriptableObject
-	{
-		public static T Instance { get; protected set; }
-
-		protected void Awake()
-		{
-			if (Instance != null && Instance != this) return;
-			Instance = this as T;
-		}
-	}
 }
