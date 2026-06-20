@@ -1,21 +1,20 @@
-using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
 
 namespace Zoomer.Graphic.Animation
 {
-	public sealed class SpriteAnimationAuthoring : MonoBehaviour
+	public sealed class CharacterAnimationAuthoring : MonoBehaviour
 	{
 		[SerializeField] private CharacterAnimationConfigSO _characterAnimationStorage;
 		[SerializeField] private ActionKind _defaultAnimation;
 
-		private sealed class AnimationBaker : Baker<SpriteAnimationAuthoring>
+		private sealed class AnimationBaker : Baker<CharacterAnimationAuthoring>
 		{
-			public override void Bake(SpriteAnimationAuthoring authoring)
+			public override void Bake(CharacterAnimationAuthoring authoring)
 			{
 				var entity = GetEntity(TransformUsageFlags.Renderable);
 
-				AddComponent(entity, new CharacterAnimationData
+				AddComponent(entity, new AnimationData
 				{
 					AnimationConfigId = authoring._characterAnimationStorage.GetEntityId()
 				});
@@ -29,8 +28,8 @@ namespace Zoomer.Graphic.Animation
 					}
 				});
 				AddComponent<ChangeAnimationData>(entity);
-				// AddComponent<SpawnCharacterGraphicTag>(entity);
 				SetComponentEnabled<ChangeAnimationData>(entity, false);
+				// AddComponent<SpawnCharacterGraphicTag>(entity);
 			}
 		}
 	}

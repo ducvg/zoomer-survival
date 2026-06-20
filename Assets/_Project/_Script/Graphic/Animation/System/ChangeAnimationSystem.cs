@@ -1,4 +1,9 @@
+using Unity.Burst;
+using Unity.Collections;
+using Unity.Collections.LowLevel.Unsafe;
 using Unity.Entities;
+using UnityEngine;
+using static Zoomer.Graphic.Animation.NativeAnimationStorageData;
 
 namespace Zoomer.Graphic.Animation
 {
@@ -8,10 +13,12 @@ namespace Zoomer.Graphic.Animation
 	{
 		private EntityQuery _query;
 
+		[BurstCompile]
 		public void OnCreate(ref SystemState state)
 		{
 			_query = SystemAPI.QueryBuilder()
-				.WithAllRW<ChangeAnimationData>()
+				.WithAll<AnimationData>()
+				.WithAllRW<ChangeAnimationData>() //enabled
 				.WithAllRW<ActionAnimationData>()
 				.Build();
 
@@ -19,11 +26,36 @@ namespace Zoomer.Graphic.Animation
 			state.RequireForUpdate<NativeAnimationStorageData>();
 		}
 
+		[BurstCompile]
 		public void OnUpdate(ref SystemState state)
 		{
 			var storage = SystemAPI.GetSingleton<NativeAnimationStorageData>();
 
+			state.Dependency = new ChangeAnimationJob
+			{
+				CharactersAnimation = storage.Characters.AsReadOnly()
+			}.ScheduleParallel(_query, state.Dependency);
+		}
 
+		[BurstCompile]
+		private partial struct ChangeAnimationJob : IJobEntity
+		{
+			[ReadOnly, NativeDisableContainerSafetyRestriction]
+			public NativeHashMap<EntityId, NativeCharacterAnimationData>.ReadOnly CharactersAnimation;
+
+			private void Execute(in AnimationData animationData, ref ChangeAnimationData changeData, ref ActionAnimationData actionData)
+			{
+				var charAnimData = CharactersAnimation[animationData.AnimationConfigId];
+				var nativeActionData = charAnimData.Actions[(byte)changeData.NewAction];
+
+				actionData = new ActionAnimationData
+				{
+					CurrentAction = changeData.NewAction,
+					FrameIndex = 0,
+					FrameTimer = 0,
+					NativeData = nativeActionData
+				};
+			}
 		}
 	}
 }

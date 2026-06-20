@@ -8,23 +8,21 @@ using UnityEngine;
 
 namespace Zoomer.Graphic.Animation
 {
-	using DrawBatch = DrawFrameData.DrawBatch;
-
 	[UpdateAfter(typeof(FrameSimulationSystem))]
 	[UpdateInGroup(typeof(PresentationSystemGroup))]
 	public partial class DrawFrameSystem : SystemBase
 	{
-		protected override void OnCreate()
-		{
-			// RequireForUpdate<DrawFrameData>();
-		}
+		// protected override void OnCreate()
+		// {
+		// 	RequireForUpdate<DrawFrameData>();
+		// }
 
 		protected override void OnUpdate()
 		{
 			var charAnimConfigDict = AnimationStorageSO.CharAnimConfigDict;
 			RenderParams rp = new(AnimationStorageSO.SharedMaterial);
 			foreach (var (animData, actionAnimData, ltw) in SystemAPI
-				.Query<RefRO<CharacterAnimationData>, RefRO<ActionAnimationData>, RefRO<LocalToWorld>>())
+				.Query<RefRO<AnimationData>, RefRO<ActionAnimationData>, RefRO<LocalToWorld>>())
 			{
 				var animConfigId = animData.ValueRO.AnimationConfigId;
 				var actionData = actionAnimData.ValueRO;

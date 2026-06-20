@@ -28,7 +28,7 @@ namespace Zoomer.Graphic.Animation
 		}
 	}
 
-	public struct CharacterAnimationData : IComponentData
+	public struct AnimationData : IComponentData
 	{
 		public EntityId AnimationConfigId;
 	}
