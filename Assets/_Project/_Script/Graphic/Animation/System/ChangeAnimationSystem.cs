@@ -18,9 +18,8 @@ namespace Zoomer.Graphic.Animation
 		{
 			_query = SystemAPI.QueryBuilder()
 				.WithAll<AnimationData>()
-				.WithAll<ChangeAnimationData>() //enabled
+				.WithAllRW<ChangeAnimationData>() //enabled
 				.WithAllRW<ActionAnimationData>()
-				.WithAllRW<ChangeAnimationTag>()
 				.Build();
 
 			state.RequireForUpdate(_query);
@@ -45,7 +44,7 @@ namespace Zoomer.Graphic.Animation
 			public NativeHashMap<EntityId, NativeAnimationStorageData.NativeCharacterAnimationData>.ReadOnly CharactersAnimation;
 
 			private void Execute(in AnimationData animationData, ref ActionAnimationData actionData,
-				EnabledRefRW<ChangeAnimationTag> changeDataTag, in ChangeAnimationData changeData)
+				EnabledRefRW<ChangeAnimationData> changeDataTag, ref ChangeAnimationData changeData)
 			{
 				var charAnimData = CharactersAnimation[animationData.AnimationConfigId];
 				var nativeActionData = charAnimData.Actions[(byte)changeData.NewAction];

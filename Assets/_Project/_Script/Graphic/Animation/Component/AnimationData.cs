@@ -7,8 +7,7 @@ using UnityEngine;
 namespace Zoomer.Graphic.Animation
 {
 
-	public struct ChangeAnimationTag : IComponentData, IEnableableComponent { }
-	public struct ChangeAnimationData : IComponentData
+	public struct ChangeAnimationData : IComponentData, IEnableableComponent
 	{
 		public ActionKind NewAction;
 		// public ActionKind PrevAction;

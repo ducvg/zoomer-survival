@@ -2,20 +2,41 @@ using Unity.Burst;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Physics;
+using Unity.Transforms;
 
 namespace Zoomer
 {
 	[WorldSystemFilter(WorldSystemFilterFlags.BakingSystem)]
-    public partial struct CharacterPhysicBakingSystem : ISystem
-    {
-        [BurstCompile]
+	public partial struct CharacterPhysicBakingSystem : ISystem
+	{
+		private EntityQuery _query;
+
+		[BurstCompile]
+		public void OnCreate(ref SystemState state)
+		{
+			_query = SystemAPI.QueryBuilder()
+				.WithAllRW<LocalTransform>()
+				.WithAllRW<PhysicsMass>()
+				.WithAllRW<PhysicsVelocity>()
+				.Build();
+		}
+
+		[BurstCompile]
 		public void OnUpdate(ref SystemState state)
 		{
-			// disable rotation for all characters
-			foreach (var mass in SystemAPI.Query<RefRW<PhysicsMass>>().WithAll<CharacterMoveDirection>())
+			state.Dependency = new Job().ScheduleParallel(_query, state.Dependency);
+		}
+
+		[BurstCompile]
+		private partial struct Job : IJobEntity
+		{
+			private void Execute(ref LocalTransform ltrans, ref PhysicsMass mass, ref PhysicsVelocity velocity)
 			{
-				mass.ValueRW.InverseInertia = float3.zero;
+				ltrans.Rotation = quaternion.identity;
+				mass.InverseInertia = float3.zero;
+				velocity.Angular = float3.zero;
+				velocity.Linear = float3.zero;
 			}
 		}
-    }
+	}
 }

@@ -28,8 +28,7 @@ namespace Zoomer.Graphic.Animation
 					}
 				});
 				AddComponent<ChangeAnimationData>(entity);
-				AddComponent<ChangeAnimationTag>(entity);
-				SetComponentEnabled<ChangeAnimationTag>(entity, false);
+				SetComponentEnabled<ChangeAnimationData>(entity, true);
 				// AddComponent<SpawnCharacterGraphicTag>(entity);
 			}
 		}
