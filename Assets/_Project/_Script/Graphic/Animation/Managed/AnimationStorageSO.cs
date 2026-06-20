@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Zoomer.Graphic.Animation
@@ -13,8 +12,9 @@ namespace Zoomer.Graphic.Animation
 		public static Dictionary<EntityId, CharacterAnimationConfigSO> CharAnimConfigDict { get; private set; }
 		public static int CharAnimationCount => CharAnimConfigDict.Count;
 
-		void OnEnable()
+		protected override void OnEnable()
 		{
+			base.OnEnable();
 			CharAnimConfigDict = new(_charAnimConfigs.Length);
 			foreach (var charAnim in _charAnimConfigs)
 			{

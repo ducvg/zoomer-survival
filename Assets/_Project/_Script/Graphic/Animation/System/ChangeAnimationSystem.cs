@@ -2,8 +2,8 @@ using Unity.Burst;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
 using Unity.Entities;
+using Unity.Mathematics;
 using UnityEngine;
-using static Zoomer.Graphic.Animation.NativeAnimationStorageData;
 
 namespace Zoomer.Graphic.Animation
 {
@@ -18,8 +18,9 @@ namespace Zoomer.Graphic.Animation
 		{
 			_query = SystemAPI.QueryBuilder()
 				.WithAll<AnimationData>()
-				.WithAllRW<ChangeAnimationData>() //enabled
+				.WithAll<ChangeAnimationData>() //enabled
 				.WithAllRW<ActionAnimationData>()
+				.WithAllRW<ChangeAnimationTag>()
 				.Build();
 
 			state.RequireForUpdate(_query);
@@ -41,9 +42,10 @@ namespace Zoomer.Graphic.Animation
 		private partial struct ChangeAnimationJob : IJobEntity
 		{
 			[ReadOnly, NativeDisableContainerSafetyRestriction]
-			public NativeHashMap<EntityId, NativeCharacterAnimationData>.ReadOnly CharactersAnimation;
+			public NativeHashMap<EntityId, NativeAnimationStorageData.NativeCharacterAnimationData>.ReadOnly CharactersAnimation;
 
-			private void Execute(in AnimationData animationData, ref ChangeAnimationData changeData, ref ActionAnimationData actionData)
+			private void Execute(in AnimationData animationData, ref ActionAnimationData actionData,
+				EnabledRefRW<ChangeAnimationTag> changeDataTag, in ChangeAnimationData changeData)
 			{
 				var charAnimData = CharactersAnimation[animationData.AnimationConfigId];
 				var nativeActionData = charAnimData.Actions[(byte)changeData.NewAction];
@@ -55,6 +57,8 @@ namespace Zoomer.Graphic.Animation
 					FrameTimer = 0,
 					NativeData = nativeActionData
 				};
+
+				changeDataTag.ValueRW = false;
 			}
 		}
 	}
