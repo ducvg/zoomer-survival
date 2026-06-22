@@ -6,10 +6,10 @@ namespace Zoomer.Graphic.Animation
 	[CreateAssetMenu(fileName = "Animation Storage", menuName = "Zoomer SO/Animation/Storage")]
 	public sealed class AnimationStorageSO : ScriptableSingleton<AnimationStorageSO>
 	{
-		[SerializeField] private CharacterAnimationConfigSO[] _charAnimConfigs;
+		[SerializeField] private CharacterAnimationSO[] _charAnimConfigs;
 		[SerializeField] private Material _sharedMaterial;
 		public static Material SharedMaterial => Instance._sharedMaterial;
-		public static Dictionary<EntityId, CharacterAnimationConfigSO> CharAnimConfigDict { get; private set; }
+		public static Dictionary<EntityId, CharacterAnimationSO> CharAnimConfigDict { get; private set; }
 		public static int CharAnimationCount => CharAnimConfigDict.Count;
 
 		protected override void OnEnable()

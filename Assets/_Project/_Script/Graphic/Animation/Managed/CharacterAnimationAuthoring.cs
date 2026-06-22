@@ -5,7 +5,7 @@ namespace Zoomer.Graphic.Animation
 {
 	public sealed class CharacterAnimationAuthoring : MonoBehaviour
 	{
-		[SerializeField] private CharacterAnimationConfigSO _characterAnimationStorage;
+		[SerializeField] private CharacterAnimationSO _characterAnimationStorage;
 		[SerializeField] private ActionKind _defaultAnimation;
 
 		private sealed class AnimationBaker : Baker<CharacterAnimationAuthoring>
