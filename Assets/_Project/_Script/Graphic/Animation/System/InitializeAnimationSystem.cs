@@ -11,22 +11,15 @@ namespace Zoomer.Graphic.Animation
 	public partial class InitializeAnimationSystem : SystemBase
 	{
 		private NativeAnimationStorageData _nativeStorage;
-		// private DrawFrameData _drawData;
 
 		protected override void OnCreate()
 		{
 			CreateNativeAnimationStorage();
-			// _drawData = new()
-			// {
-			// 	DrawBatches = new NativeHashMap<DrawFrameData.DrawBatch, NativeList<Matrix4x4>>(512, Allocator.Persistent)
-			// };
-			// EntityManager.CreateSingleton(_drawData);
 		}
 
 		protected override void OnDestroy()
 		{
 			DiposeNativeAnimationStorage();
-			// _drawData.DrawBatches.Dispose();
 		}
 
 		private void CreateNativeAnimationStorage()
@@ -47,7 +40,6 @@ namespace Zoomer.Graphic.Animation
 						Fps = actionConfig.Fps,
 						FrameCount = frameCount
 					};
-					// _drawData.MaxBatchCount += frameCount;
 				}
 				charAnimMap[configId] = charAnim;
 			}

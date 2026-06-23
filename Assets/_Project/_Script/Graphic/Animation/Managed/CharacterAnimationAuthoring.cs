@@ -12,7 +12,7 @@ namespace Zoomer.Graphic.Animation
 		{
 			public override void Bake(CharacterAnimationAuthoring authoring)
 			{
-				var entity = GetEntity(TransformUsageFlags.Renderable);
+				var entity = GetEntity(TransformUsageFlags.Dynamic); //need localToWorld for draw position
 
 				AddComponent(entity, new AnimationData
 				{
