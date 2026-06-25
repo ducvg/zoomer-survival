@@ -58,13 +58,14 @@ namespace Zoomer.Graphic.Animation
 			}
 		}
 
+		[BurstCompile]
 		private partial struct UpdateAnimationDirectionJob : IJobEntity
 		{
 			private void Execute(in LocalToWorld ltw, ref AnimationTransformData animationTransform, ref MoveDirection moveDirection)
 			{
 				var matrix = ltw.Value;
 
-				if (moveDirection.Value.x < -0.01f) matrix.c0 *= -1f;
+				if (moveDirection.Value.x < -0.01f) matrix.c0 *= animationTransform.IsDefaultFlipX ? 1f : -1f;
 
 				animationTransform.Martix = matrix;
 			}
