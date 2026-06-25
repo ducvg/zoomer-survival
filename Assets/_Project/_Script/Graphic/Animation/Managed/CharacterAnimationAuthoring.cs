@@ -16,7 +16,8 @@ namespace Zoomer.Graphic.Animation
 				var entity = GetEntity(TransformUsageFlags.Renderable);
 				AddComponent(entity, new AnimationTransformData()
 				{
-					IsDefaultFlipX = authoring._DefaultFlipX
+					IsFaceLeftDefault = authoring._DefaultFlipX,
+					Martix = Matrix4x4.identity
 				});
 				AddComponent(entity, new AnimationData
 				{

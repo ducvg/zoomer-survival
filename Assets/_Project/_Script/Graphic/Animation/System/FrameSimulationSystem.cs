@@ -3,6 +3,7 @@ using Unity.Burst.CompilerServices;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
+using Unity.Mathematics;
 using Unity.Transforms;
 
 namespace Zoomer.Graphic.Animation
@@ -37,7 +38,7 @@ namespace Zoomer.Graphic.Animation
 				DeltaTime = SystemAPI.Time.DeltaTime
 			}.ScheduleParallel(_query, state.Dependency);
 
-			var updateDirectionHandle = new UpdateAnimationDirectionJob().ScheduleParallel(_moveQuery, state.Dependency);
+			var updateDirectionHandle = new UpdateAnimationTransformJob().ScheduleParallel(_moveQuery, state.Dependency);
 
 			state.Dependency = JobHandle.CombineDependencies(updateFrameHandle, updateDirectionHandle);
 		}
@@ -59,15 +60,19 @@ namespace Zoomer.Graphic.Animation
 		}
 
 		[BurstCompile]
-		private partial struct UpdateAnimationDirectionJob : IJobEntity
+		private partial struct UpdateAnimationTransformJob : IJobEntity
 		{
 			private void Execute(in LocalToWorld ltw, ref AnimationTransformData animationTransform, ref MoveDirection moveDirection)
 			{
-				var matrix = ltw.Value;
+				ref var matrix = ref animationTransform.Martix;
+				matrix.SetColumn(3, ltw.Value.c3); //position
 
-				if (moveDirection.Value.x < -0.01f) matrix.c0 *= animationTransform.IsDefaultFlipX ? 1f : -1f;
-
-				animationTransform.Martix = matrix;
+				float curDirX = moveDirection.Value.x;
+				if (math.abs(curDirX) > 0.01f)
+				{
+					float sign = math.sign(curDirX);
+					matrix.m00 = animationTransform.IsFaceLeftDefault ? -sign : sign;
+				}
 			}
 		}
 	}

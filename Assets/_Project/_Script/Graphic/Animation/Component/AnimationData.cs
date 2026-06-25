@@ -8,7 +8,7 @@ namespace Zoomer.Graphic.Animation
 {
 	public struct AnimationTransformData : IComponentData
 	{
-		public bool IsDefaultFlipX;
+		public bool IsFaceLeftDefault;
 		public Matrix4x4 Martix;
 	}
 
