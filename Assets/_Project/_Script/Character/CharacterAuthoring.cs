@@ -17,8 +17,8 @@ namespace Zoomer
 			{
 				var entity = GetEntity(TransformUsageFlags.Dynamic);
 
-				AddComponent<CharacterMoveDirection>(entity);
-				AddComponent(entity, new CharacterMoveSpeed
+				AddComponent<MoveDirection>(entity);
+				AddComponent(entity, new MoveSpeed
 				{
 					Value = authoring._moveSpeed
 				});

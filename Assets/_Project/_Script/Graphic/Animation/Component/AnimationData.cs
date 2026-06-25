@@ -6,26 +6,15 @@ using UnityEngine;
 
 namespace Zoomer.Graphic.Animation
 {
+	public struct AnimationTransformData : IComponentData
+	{
+		public Matrix4x4 Martix;
+	}
 
 	public struct ChangeAnimationData : IComponentData, IEnableableComponent
 	{
 		public ActionKind NewAction;
 		// public ActionKind PrevAction;
-	}
-
-	public struct DrawFrameData : IComponentData //idk
-	{
-		public NativeHashMap<DrawBatch, NativeList<Matrix4x4>> DrawBatches;
-		public int MaxBatchCount;
-
-		public struct DrawBatch : IEquatable<DrawBatch>
-		{
-			public EntityId CharConfigId;
-			public ActionKind ActionKind;
-			public int FrameIndex;
-
-			public bool Equals(DrawBatch other) => CharConfigId == other.CharConfigId && ActionKind == other.ActionKind && FrameIndex == other.FrameIndex;
-		}
 	}
 
 	public struct AnimationData : IComponentData

@@ -3,12 +3,12 @@ using Unity.Mathematics;
 
 namespace Zoomer
 {
-	public struct CharacterMoveDirection : IComponentData
+	public struct MoveDirection : IComponentData
 	{
 		public float2 Value;
 	}
 
-	public struct CharacterMoveSpeed : IComponentData
+	public struct MoveSpeed : IComponentData
 	{
 		public float Value;
 	}

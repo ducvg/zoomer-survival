@@ -4,16 +4,14 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
 using Unity.Transforms;
-using UnityEngine;
 
 namespace Zoomer.Graphic.Animation
 {
-	using DrawBatch = DrawFrameData.DrawBatch;
-
 	[UpdateInGroup(typeof(PresentationSystemGroup))]
 	public partial struct FrameSimulationSystem : ISystem
 	{
 		private EntityQuery _query;
+		private EntityQuery _moveQuery;
 
 		[BurstCompile]
 		public void OnCreate(ref SystemState state)
@@ -22,20 +20,30 @@ namespace Zoomer.Graphic.Animation
 				.WithAllRW<ActionAnimationData>()
 				.Build();
 
+			_moveQuery = SystemAPI.QueryBuilder()
+				.WithAll<LocalToWorld>()
+				.WithAll<MoveDirection>()
+				.WithAllRW<AnimationTransformData>()
+				.Build();
+
 			state.RequireForUpdate<ActionAnimationData>();
 		}
 
 		[BurstCompile]
 		public void OnUpdate(ref SystemState state)
 		{
-			state.Dependency = new UpdateFrameIndexJob
+			var updateFrameHandle = new UpdateFrameJob
 			{
-				DeltaTime = SystemAPI.Time.DeltaTime,
+				DeltaTime = SystemAPI.Time.DeltaTime
 			}.ScheduleParallel(_query, state.Dependency);
+
+			var updateDirectionHandle = new UpdateAnimationDirectionJob().ScheduleParallel(_moveQuery, state.Dependency);
+
+			state.Dependency = JobHandle.CombineDependencies(updateFrameHandle, updateDirectionHandle);
 		}
 
 		[BurstCompile]
-		private partial struct UpdateFrameIndexJob : IJobEntity
+		private partial struct UpdateFrameJob : IJobEntity
 		{
 			[ReadOnly] public float DeltaTime;
 
@@ -47,6 +55,18 @@ namespace Zoomer.Graphic.Animation
 
 				actionData.FrameTimer = 0;
 				actionData.FrameIndex = (actionData.FrameIndex + 1) % actionData.NativeData.FrameCount;
+			}
+		}
+
+		private partial struct UpdateAnimationDirectionJob : IJobEntity
+		{
+			private void Execute(in LocalToWorld ltw, ref AnimationTransformData animationTransform, ref MoveDirection moveDirection)
+			{
+				var matrix = ltw.Value;
+
+				if (moveDirection.Value.x < -0.01f) matrix.c0 *= -1f;
+
+				animationTransform.Martix = matrix;
 			}
 		}
 	}
